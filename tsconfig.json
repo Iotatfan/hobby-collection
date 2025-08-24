@@ -23,6 +23,8 @@
             "@/router/*": ["./router/*"],
             "@/hooks/*": ["./hooks/*"],
             "@/layouts/*": ["./layouts/*"],
+            "@/services/*": ["./services/*"],
+            "@/libs/*": ["./libs/*"],
         }
     },
     "include": ["src"],
