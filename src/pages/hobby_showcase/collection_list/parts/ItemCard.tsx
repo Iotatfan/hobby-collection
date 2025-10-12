@@ -18,10 +18,16 @@ const ItemCard: React.FC<IItemCard> = ({
         <Card.Root
             w='full'
             maxH='23rem'
+            minH='23rem'
             maxW='15rem'
-            rounded='0'
+            minW='15rem'
+            rounded='4'
+            borderStyle='solid'
+            shadow='xl'
+            role="group"
+            _hover={{ borderColor: 'gray.400', cursor: 'pointer' }}
         >
-            <Card.Header h='12rem' p={0} bg='gray.50'>
+            <Card.Header h='12rem' p={0}>
                 <Image
                     boxSize='full'
                     maxBlockSize='12rem'
@@ -34,10 +40,10 @@ const ItemCard: React.FC<IItemCard> = ({
                 />
             </Card.Header>
             <Card.Body p={2} gap={1}>
-                <Card.Title truncate>{title}</Card.Title>
-                <Text truncate>{grade}</Text>
+                <Card.Title truncate lineClamp={2} fontSize={16} fontWeight='bold'>{title}</Card.Title>
+                <Text truncate fontSize={12} color='gray.500' fontWeight='medium'>{grade}</Text>
                 <Stack direction='row' alignItems='flex-end'>
-                    <Text>{releaseType}</Text>
+                    <Text fontSize={12} color='gray.500' fontWeight='medium'>{releaseType}</Text>
                 </Stack>
             </Card.Body>
         </Card.Root>

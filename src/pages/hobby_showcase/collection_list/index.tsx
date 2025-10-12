@@ -29,6 +29,7 @@ const CollectionList = () => {
                         (
                             // Loading Complete
                             <Grid
+                                marginTop={4}
                                 templateColumns={
                                     [
                                         'repeat(2, 1fr)',
@@ -37,7 +38,7 @@ const CollectionList = () => {
                                         'repeat(4, 1fr)',
                                         'repeat(5, 1fr)',
                                     ]
-                                } gap='2'>
+                                } gap='4'>
                                 {collections?.map((collection) => (
                                     <Center>
                                         <ItemCard

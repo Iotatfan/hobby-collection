@@ -1,5 +1,6 @@
 import type React from "react";
 import { Box } from '@chakra-ui/react';
+import Header from "./header";
 
 
 interface IHobbyShowcaseLayout {
@@ -8,9 +9,12 @@ interface IHobbyShowcaseLayout {
 
 const HobbyShowcaseLayout: React.FC<IHobbyShowcaseLayout> = ({ children }) => {
 
-
     return (
-       <Box>Hobby Showcase Layout {children}</Box>
+
+        <Box>
+            <Header></Header>
+            {children}
+        </Box>
     )
 }
 
