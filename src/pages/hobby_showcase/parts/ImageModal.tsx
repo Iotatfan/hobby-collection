@@ -1,6 +1,11 @@
 import { Box, IconButton, Image, VStack, Text, HStack, Badge, Spinner } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AnimatePresence, motion } from "framer-motion";
+
+
+const MotionImage = motion(Image);
+const MotionBox = motion(Box);
 
 interface IImageModal {
     title?: string;
@@ -22,6 +27,7 @@ const ImageModal: React.FC<IImageModal> = ({
     onClose
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0)
+    const [direction, setDirection] = useState(0)
 
     useEffect(() => {
         if (!isOpen) return
@@ -40,16 +46,52 @@ const ImageModal: React.FC<IImageModal> = ({
         setCurrentIndex(index)
     }
 
-    const handlePrev = () => {
-        setCurrentIndex((prevIndex) => (prevIndex === 0 ? (images?.length ?? 1) - 1 : prevIndex - 1))
-    }
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden'
+        }
+        else {
+            document.body.style.overflow = 'unset'
+        }
+        return () => {
+            document.body.style.overflow = 'unset'
+        }
+    }, [isOpen])
 
-    const handleNext = () => {
+    const handlePrev = useCallback(() => {
+        setDirection(-1)
+        setCurrentIndex((prevIndex) => (prevIndex === 0 ? (images?.length ?? 1) - 1 : prevIndex - 1))
+    }, [images])
+
+    const handleNext = useCallback(() => {
+        setDirection(1)
         setCurrentIndex((nextIndex) => (nextIndex === (images?.length ?? 1) - 1 ? 0 : nextIndex + 1))
+    }, [images])
+
+    const slideVariants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? 100 : -100,
+            opacity: 0,
+            zIndex: 0,
+        }),
+        center: {
+            x: 0,
+            opacity: 1,
+            zIndex: 10,
+        },
+        exit: (direction: number) => ({
+            x: direction < 0 ? 100 : -100,
+            opacity: 0,
+            zIndex: 0,
+        }),
     }
 
     return (
-        <Box
+        <MotionBox
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             position="fixed"
             inset={0}
             zIndex={100}
@@ -62,6 +104,7 @@ const ImageModal: React.FC<IImageModal> = ({
                     alignItems='center'
                     justifyContent='center'
                     h='full'
+                    paddingTop={{ base: 4, lg: 80 }}
                 >
                     <Spinner
                         borderWidth="4px"
@@ -72,6 +115,7 @@ const ImageModal: React.FC<IImageModal> = ({
                 </Box>) : (
                 <Box
                     display='flex'
+                    flexDirection={{ base: 'column', lg: 'row' }}
                     alignItems='center'
                     justifyContent='center'
                     h='full'
@@ -81,10 +125,10 @@ const ImageModal: React.FC<IImageModal> = ({
                         flexDirection={{ base: 'column', lg: 'row' }}
                         maxW="1400px"
                         w="full"
-                        h={{ base: 'auto', lg: '80vh' }}
+                        h={{ base: 'full', lg: '80vh' }}
+                        overflow={{ base: 'auto', lg: 'hidden' }}
                         bg="gray.900"
-                        borderRadius="md"
-                        overflow="hidden"
+                        borderRadius={{ base: 0, lg: 'md' }}
                         boxShadow="2xl"
                         position='relative'
                         onClick={(e) => e.stopPropagation()}
@@ -93,36 +137,33 @@ const ImageModal: React.FC<IImageModal> = ({
                         <VStack
                             position='relative'
                             flex="1"
-                            overflow="hidden"
                             alignItems='center'
                             justifyContent='center'
                             display='flex'
                             bg='black'
-                            h={{ base: '50vh', lg: 'full' }}
                             paddingBottom={4}
                         >
-                            <IconButton
-                                position="absolute"
-                                left={4}
-                                zIndex={10}
-                                aria-label="Previous image"
-                                onClick={handlePrev}
-                                variant="ghost"
-                                color="white"
-                                bg="blackAlpha.500"
-                                _hover={{ bg: 'blackAlpha.700' }}
-                                borderRadius="full"
-                                size="lg"
-                            >
-                                <ChevronLeft size={32} />
-                            </IconButton>
-
-                            <Image
-                                src={images && images.length > 0 ? images[currentIndex] : ''}
-                                alt="Collection Image"
-                                objectFit="contain"
-                                h={{ base: '50vh', lg: 'full' }}
-                            />
+                            <AnimatePresence initial={false} custom={direction} mode="wait">
+                                <MotionImage
+                                    key={currentIndex}
+                                    src={images && images.length > 0 ? images[currentIndex] : ''}
+                                    custom={direction}
+                                    variants={slideVariants}
+                                    initial='enter'
+                                    animate='center'
+                                    exit='exit'
+                                    transition={{
+                                        x: { type: 'spring', stiffness: 300, damping: 30 },
+                                        opacity: { duration: 0.2 },
+                                    }}
+                                    display='flex'
+                                    alignItems='center'
+                                    justifyContent='center'
+                                    w='full'
+                                    h={{ base: '40vh', lg: 'full' }}
+                                    objectFit='contain'
+                                />
+                            </AnimatePresence>
 
                             <IconButton
                                 position="absolute"
@@ -140,6 +181,22 @@ const ImageModal: React.FC<IImageModal> = ({
                                 <ChevronRight size={32} />
                             </IconButton>
 
+                            <IconButton
+                                position="absolute"
+                                left={4}
+                                zIndex={10}
+                                aria-label="Previous image"
+                                onClick={handlePrev}
+                                variant="ghost"
+                                color="white"
+                                bg="blackAlpha.500"
+                                _hover={{ bg: 'blackAlpha.700' }}
+                                borderRadius="full"
+                                size="lg"
+                            >
+                                <ChevronLeft size={32} />
+                            </IconButton>
+
                             {/* Carousel Thumbnails */}
                             <HStack gap={2} mt={4} flexWrap="wrap">
                                 {images?.map((image, index) => (
@@ -148,13 +205,19 @@ const ImageModal: React.FC<IImageModal> = ({
                                         as="button"
                                         onClick={() => {
                                             handleCarouselClick(index);
+                                            setDirection(index > currentIndex ? 1 : -1);
                                         }}
                                         w={12}
                                         h={12}
                                         borderRadius="md"
                                         overflow="hidden"
-                                        border={index === currentIndex ? '2px solid' : '2px solid transparent'}
+                                        border={index === currentIndex ? '1px solid' : '1px solid transparent'}
                                         borderColor={index === currentIndex ? 'red.500' : 'transparent'}
+                                        opacity={index == currentIndex ? 1 : 0.5}
+                                        _hover={{
+                                            opacity: 1
+                                        }}
+                                        transition='opacity 0.2s, border-color 0.2s'
                                     >
                                         <Image
                                             src={image}
@@ -169,56 +232,52 @@ const ImageModal: React.FC<IImageModal> = ({
                             </HStack>
                         </VStack>
 
-                        <Box
+                        <VStack
                             flex="1"
                             p={{ base: 6, lg: 10 }}
                             display="flex"
                             flexDirection="column"
                             justifyContent="center"
                             bg="gray.800"
-                        >
-                            <VStack align='start' gap={6}>
-                                {/* Label */}
-                                <Badge
-                                    variant='solid'
-                                    colorPalette={grade === 'High Grade' ? 'red' : 'yellow'}
-                                    bottom={2} left={2}
-                                    fontSize='sm'
-                                    fontWeight='bold'
-                                    px={1.5}
-                                    py={1}
-                                >
-                                    {grade}
-                                </Badge>
+                            align='start' gap={6}>
+                            {/* Label */}
+                            <Badge
+                                variant='solid'
+                                colorPalette={grade === 'High Grade' ? 'red' : 'yellow'}
+                                bottom={2} left={2}
+                                fontSize='sm'
+                                fontWeight='bold'
+                                px={1.5}
+                                py={1}
+                            >
+                                {grade}
+                            </Badge>
 
-                                {/* Title */}
-                                <Text
-                                    fontSize={{ base: '2xl', lg: '3xl' }}
-                                    fontWeight="bold"
-                                    color="white"
-                                    lineHeight="shorter"
-                                >
-                                    {title}
-                                </Text>
+                            {/* Title */}
+                            <Text
+                                fontSize={{ base: '2xl', lg: '3xl' }}
+                                fontWeight="bold"
+                                color="white"
+                                lineHeight="shorter"
+                            >
+                                {title}
+                            </Text>
 
-                                {/* Description */}
-                                <Text
-                                    fontSize={{ base: 'md', lg: 'lg' }}
-                                    color="gray.300"
-                                    lineHeight="relaxed"
-                                >
-                                    {description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
-                                </Text>
-
-
-                            </VStack>
-                        </Box>
+                            {/* Description */}
+                            <Text
+                                fontSize={{ base: 'md', lg: 'lg' }}
+                                color="gray.300"
+                                lineHeight="relaxed"
+                            >
+                                {description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
+                            </Text>
+                        </VStack>
 
                         {/* Close Button */}
                         <IconButton
-                            position={'absolute'}
-                            right={0}
-                            top={0}
+                            position={{ base:'fixed', lg:'absolute'}}
+                            right={{ base: 0, lg: 0 }}
+                            top={{ base: 0, lg: 0 }}
                             zIndex={101}
                             color='white'
                             variant='ghost'
@@ -234,7 +293,7 @@ const ImageModal: React.FC<IImageModal> = ({
             )
             }
 
-        </Box>
+        </MotionBox>
     )
 }
 

@@ -1,4 +1,5 @@
 import { Badge, Box, Card, Image, Text } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 
 interface IItemCard {
     grade: string;
@@ -9,55 +10,64 @@ interface IItemCard {
     onClick?: () => void;
 }
 
+const MotionBox = motion(Box);
+
 const ItemCard: React.FC<IItemCard> = ({
     grade,
     cover,
     title,
     releaseType,
+    index,
     onClick
 }) => {
     return (
-        <Card.Root
-            w='full'
-            borderRadius='md'
-            borderStyle='solid'
-            shadow='xl'
-            role="group"
-            overflow='hidden'
-            aspectRatio='3/4'
-            _hover={{ borderColor: 'gray.400', cursor: 'pointer' }}
-            onClick={onClick}
+        <MotionBox
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: (index || 0) * 0.2 , duration: 0.5 }}
         >
-            <Box
-                position='relative'
+            <Card.Root
+                w='full'
+                borderRadius='md'
+                borderStyle='solid'
+                shadow='xl'
+                role="group"
                 overflow='hidden'
+                aspectRatio='3/4'
+                _hover={{ borderColor: 'gray.400', cursor: 'pointer' }}
+                onClick={onClick}
             >
-                <Image
-                    boxSize='full'
-                    maxBlockSize='12rem'
-                    alt="cover image"
-                    objectFit='cover'
-                    css={{
-                        aspectRatio: '1',
-                    }}
-                    src={cover}
-                />
-                <Badge
-                    variant='solid'
-                    colorPalette= {grade === 'High Grade' ? 'red' : 'yellow'}
-                    position='absolute'
-                    bottom={2} left={2}
-                    fontSize='xs'
-                    fontWeight='medium'>
-                    {grade}
-                </Badge>
-            </Box>
+                <Box
+                    position='relative'
+                    overflow='hidden'
+                >
+                    <Image
+                        boxSize='full'
+                        maxBlockSize='12rem'
+                        alt="cover image"
+                        objectFit='cover'
+                        css={{
+                            aspectRatio: '1',
+                        }}
+                        src={cover}
+                    />
+                    <Badge
+                        variant='solid'
+                        colorPalette={grade === 'High Grade' ? 'red' : 'yellow'}
+                        position='absolute'
+                        bottom={2} left={2}
+                        fontSize='xs'
+                        fontWeight='medium'>
+                        {grade}
+                    </Badge>
+                </Box>
 
-            <Card.Body p={2} gap={1}>
-                <Card.Title truncate lineClamp={2} fontSize={'md'} fontWeight='bold' >{title}</Card.Title>
-                <Text truncate fontSize={'xs'} color='gray.500' fontWeight='medium'>{releaseType}</Text>
-            </Card.Body>
-        </Card.Root>
+                <Card.Body p={2} gap={1}>
+                    <Card.Title truncate lineClamp={2} fontSize={'md'} fontWeight='bold' >{title}</Card.Title>
+                    <Text truncate fontSize={'xs'} color='gray.500' fontWeight='medium'>{releaseType}</Text>
+                </Card.Body>
+            </Card.Root>
+        </MotionBox>
     )
 }
 

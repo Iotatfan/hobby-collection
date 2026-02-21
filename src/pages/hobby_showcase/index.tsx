@@ -22,9 +22,10 @@ const CollectionList = () => {
     const handleCardClick = async (id: number) => {
         setIsLoadingCollectionDetail(true)
         setIsModalOpen(true)
-        await getCollectionDetail(id).then(() => {
-            setIsLoadingCollectionDetail(false)
-        }).
+        await getCollectionDetail(id).
+            then(() => {
+                setIsLoadingCollectionDetail(false)
+            }).
             catch(() => {
                 setIsModalOpen(false)
             })
@@ -44,22 +45,23 @@ const CollectionList = () => {
             <Box flexGrow='1' maxW='100%'>
                 <Text>Filter Section</Text>
                 {
-                    isLoadingCollections ? (
-                        // Show Skeleton
-                        <Box
-                            display='flex'
-                            alignItems='center'
-                            justifyContent='center'
-                            h='50vh'
-                        >
-                            <Spinner
-                                borderWidth="4px"
-                                animationDuration="0.65s"
-                                color="blackAlpha.800"
-                                size="xl"
-                            />
-                        </Box>
-                    )
+                    isLoadingCollections ?
+                        (
+                            // Show Skeleton
+                            <Box
+                                display='flex'
+                                alignItems='center'
+                                justifyContent='center'
+                                h='50vh'
+                            >
+                                <Spinner
+                                    borderWidth="4px"
+                                    animationDuration="0.65s"
+                                    color="blackAlpha.800"
+                                    size="xl"
+                                />
+                            </Box>
+                        )
                         :
                         (
                             // Loading Complete
@@ -74,10 +76,10 @@ const CollectionList = () => {
                                         'repeat(5, 1fr)',
                                     ]
                                 } gap='4'>
-                                {collections?.map((collection) => (
-                                    <Center>
+                                {collections?.map((collection, index) => (
+                                    <Center key={collection.id}>
                                         <ItemCard
-                                            key={collection.id}
+                                            index={index}
                                             title={collection.title}
                                             grade={collection.type.grade.name}
                                             cover={collection.cover}
