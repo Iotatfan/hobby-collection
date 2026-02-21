@@ -4,6 +4,7 @@ import useCollectionDetail from "@/hooks/collections/useCollectionDetail"
 import { useEffect, useState } from "react"
 import ItemCard from "./parts/ItemCard"
 import ImageModal from "./parts/ImageModal"
+import { AnimatePresence } from "framer-motion"
 
 const CollectionList = () => {
     const { getCollections, collections } = useCollections()
@@ -93,15 +94,17 @@ const CollectionList = () => {
                 }
             </Box>
 
-            {isModalOpen && <ImageModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                isLoading={isLoadingCollectionDetail}
-                grade={collection?.type.grade.name}
-                title={collection?.title}
-                images={collection?.pictures}
-                description={collection?.description}
-            />}
+            <AnimatePresence>
+                {isModalOpen && <ImageModal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    isLoading={isLoadingCollectionDetail}
+                    grade={collection?.type.grade.name}
+                    title={collection?.title}
+                    images={collection?.pictures}
+                    description={collection?.description}
+                />}
+            </AnimatePresence>
         </Flex>
     )
 }
