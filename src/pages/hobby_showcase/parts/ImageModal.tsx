@@ -138,65 +138,79 @@ const ImageModal: React.FC<IImageModal> = ({
                             position='relative'
                             flex="1"
                             alignItems='center'
-                            justifyContent='center'
+                            justifyContent='space-between'
                             display='flex'
                             bg='black'
+                            w='full'
                             paddingBottom={4}
                             zIndex={1}
                         >
-                            <AnimatePresence initial={false} custom={direction} mode="wait">
-                                <MotionImage
-                                    key={currentIndex}
-                                    src={images && images.length > 0 ? images[currentIndex] : ''}
-                                    custom={direction}
-                                    variants={slideVariants}
-                                    initial='enter'
-                                    animate='center'
-                                    exit='exit'
-                                    transition={{
-                                        x: { type: 'spring', stiffness: 300, damping: 30 },
-                                        opacity: { duration: 0.2 },
-                                    }}
-                                    display='flex'
-                                    alignItems='center'
-                                    justifyContent='center'
-                                    w='full'
-                                    h={{ base: '40vh', lg: 'full' }}
-                                    objectFit='contain'
-                                />
-                            </AnimatePresence>
-
-                            <IconButton
-                                position="absolute"
-                                right={4}
-                                zIndex={10}
-                                aria-label="Next image"
-                                onClick={handleNext}
-                                variant="ghost"
-                                color="white"
-                                bg="blackAlpha.500"
-                                _hover={{ bg: 'blackAlpha.700' }}
-                                borderRadius="full"
-                                size="lg"
+                            <Box
+                                position='relative'
+                                w='full'
+                                h={{ base: '55vh', lg: 'calc(80vh - 140px)' }}
+                                display='flex'
+                                alignItems='center'
+                                justifyContent='center'
+                                overflow='hidden'
                             >
-                                <ChevronRight size={32} />
-                            </IconButton>
+                                <AnimatePresence initial={false} custom={direction} mode="wait">
+                                    <MotionImage
+                                        key={currentIndex}
+                                        src={images && images.length > 0 ? images[currentIndex] : ''}
+                                        custom={direction}
+                                        variants={slideVariants}
+                                        initial='enter'
+                                        animate='center'
+                                        exit='exit'
+                                        transition={{
+                                            x: { type: 'spring', stiffness: 300, damping: 30 },
+                                            opacity: { duration: 0.2 },
+                                        }}
+                                        w='auto'
+                                        h='auto'
+                                        maxW='100%'
+                                        maxH='100%'
+                                        objectFit='contain'
+                                    />
+                                </AnimatePresence>
 
-                            <IconButton
-                                position="absolute"
-                                left={4}
-                                zIndex={10}
-                                aria-label="Previous image"
-                                onClick={handlePrev}
-                                variant="ghost"
-                                color="white"
-                                bg="blackAlpha.500"
-                                _hover={{ bg: 'blackAlpha.700' }}
-                                borderRadius="full"
-                                size="lg"
-                            >
-                                <ChevronLeft size={32} />
-                            </IconButton>
+                                <IconButton
+                                    position="absolute"
+                                    right={4}
+                                    top='50%'
+                                    transform='translateY(-50%)'
+                                    zIndex={10}
+                                    aria-label="Next image"
+                                    onClick={handleNext}
+                                    variant="ghost"
+                                    color="white"
+                                    bg="blackAlpha.500"
+                                    _hover={{ bg: 'blackAlpha.700' }}
+                                    borderRadius="full"
+                                    size="lg"
+                                >
+                                    <ChevronRight size={32} />
+                                </IconButton>
+
+                                <IconButton
+                                    position="absolute"
+                                    left={4}
+                                    top='50%'
+                                    transform='translateY(-50%)'
+                                    zIndex={10}
+                                    aria-label="Previous image"
+                                    onClick={handlePrev}
+                                    variant="ghost"
+                                    color="white"
+                                    bg="blackAlpha.500"
+                                    _hover={{ bg: 'blackAlpha.700' }}
+                                    borderRadius="full"
+                                    size="lg"
+                                >
+                                    <ChevronLeft size={32} />
+                                </IconButton>
+                            </Box>
 
                             {/* Carousel Thumbnails */}
                             <HStack gap={2} mt={4} flexWrap="wrap">
