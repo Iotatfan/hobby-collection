@@ -13,7 +13,7 @@ function App() {
             }
         >
             <Box minH='100dvh' bg='background.bg'>
-                <BrowserRouter>
+                <BrowserRouter basename={import.meta.env.BASE_URL}>
                     <Routes>
                         {routes.map(({ name, path, component: Component, children }, idx) => (
                             <Route key={`${name}-${idx}`} path={path} element={<Component />}>
