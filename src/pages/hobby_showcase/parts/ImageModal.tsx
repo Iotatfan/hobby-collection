@@ -2,6 +2,7 @@ import { Box, IconButton, Image, VStack, Text, HStack, Badge, Spinner } from "@c
 import { useCallback, useEffect, useState } from "react";
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { AnimatePresence, motion } from "framer-motion";
+import { cloudinarySizes } from "@/utils/cloudinary";
 
 
 const MotionBox = motion(Box);
@@ -181,7 +182,7 @@ const ImageModal: React.FC<IImageModal> = ({
                                             justifyContent='center'
                                         >
                                             <Image
-                                                src={currentImage}
+                                                src={cloudinarySizes(currentImage).preview}
                                                 alt={`${title ?? 'Image'} ${currentIndex + 1}`}
                                                 w='full'
                                                 h='full'
@@ -259,7 +260,7 @@ const ImageModal: React.FC<IImageModal> = ({
                                         transition='opacity 0.2s, border-color 0.2s'
                                     >
                                         <Image
-                                            src={image}
+                                            src={cloudinarySizes(image).thumb}
                                             style={{
                                                 width: '100%',
                                                 height: '100%',

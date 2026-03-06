@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Badge, Box, Card, HStack, Image } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import { cloudinarySizes } from "@/utils/cloudinary";
 
 interface IItemCard {
     id: number;
@@ -54,7 +55,7 @@ const ItemCard: React.FC<IItemCard> = ({
                         css={{
                             aspectRatio: '1',
                         }}
-                        src={cover}
+                        src={cloudinarySizes(cover).cover}
                     />
                     <HStack
                         position='absolute'
