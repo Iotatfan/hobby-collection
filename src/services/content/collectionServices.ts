@@ -19,13 +19,15 @@ const getAllCollections = async () => {
 
 const getCollection = async (id: number) => {
     const cached = getCachedCollection(id)
-    if (cached) return cached as ICollection
-
+    if (cached) {
+        return { data: cached as ICollection, fromCache: true}
+    }
+    
     try {
         const response = await http.get(`/collection/${id}`)
         setCachedCollection(response.data.data as ICollection)
 
-        return response.data.data as ICollection
+        return { data: response.data.data as ICollection, fromCache: false }
     } catch (error) {
         console.error("Error fetching collection detail:", error)
         throw error

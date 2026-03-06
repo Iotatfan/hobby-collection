@@ -29,7 +29,7 @@ export function getCachedCollection(id: number): ICollection | null {
 export function setCachedCollection(data: ICollection) {
   const entry: CollectionDetailCache = {
     data,
-    timestamp: Date.now() + CACHE_DURATION 
+    timestamp: Date.now()
   }
 
   localStorage.setItem(`collection_${data.id}`, JSON.stringify(entry))
@@ -52,7 +52,7 @@ export function getCachedCollectionList(): ICollection[] | null {
 export function setCachedCollectionList(data: ICollection[]) {
   const entry: CollectionListCache = {
     data,
-    timestamp: Date.now() + CACHE_DURATION 
+    timestamp: Date.now()
   }
 
   localStorage.setItem(`collection_list`, JSON.stringify(entry))

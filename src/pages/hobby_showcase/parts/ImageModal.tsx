@@ -1,7 +1,7 @@
 import { Box, IconButton, Image, VStack, Text, HStack, Badge, Spinner } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 
 const MotionBox = motion(Box);
@@ -27,6 +27,8 @@ const ImageModal: React.FC<IImageModal> = ({
     onClose
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0)
+    const imageCount = images?.length ?? 0
+    const currentImage = imageCount ? images?.[currentIndex] : undefined
 
     const preloadImage = useCallback((src?: string) => {
         if (!src) return
@@ -48,6 +50,7 @@ const ImageModal: React.FC<IImageModal> = ({
     }, [isOpen, onClose])
 
     const handleCarouselClick = (index: number) => {
+        if (!imageCount) return
         setCurrentIndex(index)
     }
 
@@ -64,23 +67,36 @@ const ImageModal: React.FC<IImageModal> = ({
     }, [isOpen])
 
     const handlePrev = useCallback(() => {
-        setCurrentIndex((prevIndex) => (prevIndex === 0 ? (images?.length ?? 1) - 1 : prevIndex - 1))
-    }, [images])
+        if (imageCount < 2) return
+        setCurrentIndex((prevIndex) => (prevIndex === 0 ? imageCount - 1 : prevIndex - 1))
+    }, [imageCount])
 
     const handleNext = useCallback(() => {
-        setCurrentIndex((nextIndex) => (nextIndex === (images?.length ?? 1) - 1 ? 0 : nextIndex + 1))
-    }, [images])
+        if (imageCount < 2) return
+        setCurrentIndex((nextIndex) => (nextIndex === imageCount - 1 ? 0 : nextIndex + 1))
+    }, [imageCount])
 
     useEffect(() => {
-        if (!isOpen || !images?.length) return
+        if (!isOpen) return
+        setCurrentIndex(0)
+    }, [isOpen, images])
 
-        const nextIndex = (currentIndex + 1) % images.length
-        const prevIndex = (currentIndex - 1 + images.length) % images.length
+    useEffect(() => {
+        if (!imageCount) return
+        if (currentIndex > imageCount - 1) {
+            setCurrentIndex(0)
+        }
+    }, [currentIndex, imageCount])
 
-        preloadImage(images[currentIndex])
+    useEffect(() => {
+        if (!isOpen || imageCount < 2 || !images) return
+
+        const nextIndex = (currentIndex + 1) % imageCount
+        const prevIndex = (currentIndex - 1 + imageCount) % imageCount
+
         preloadImage(images[nextIndex])
         preloadImage(images[prevIndex])
-    }, [currentIndex, images, isOpen, preloadImage])
+    }, [currentIndex, imageCount, images, isOpen, preloadImage])
 
     return (
         <MotionBox
@@ -150,73 +166,75 @@ const ImageModal: React.FC<IImageModal> = ({
                                 justifyContent='center'
                                 overflow='hidden'
                             >
-                                <MotionBox
-                                    w={`${(images?.length ?? 1) * 100}%`}
-                                    h='full'
-                                    display='flex'
-                                    animate={{ x: `-${currentIndex * 100}%` }}
-                                    transition={{ type: 'tween', ease: 'easeOut', duration: 0.28 }}
-                                    style={{ willChange: 'transform' }}
-                                >
-                                    {images?.map((image, index) => (
-                                        <Box
-                                            key={`${image}-${index}`}
-                                            w='100%'
+                                <AnimatePresence mode="wait" initial={false}>
+                                    {currentImage ? (
+                                        <MotionBox
+                                            key={`${currentImage}-${currentIndex}`}
+                                            w='full'
                                             h='full'
-                                            flex='0 0 100%'
+                                            initial={{ opacity: 0.2 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0.2 }}
+                                            transition={{ duration: 0.2 }}
                                             display='flex'
                                             alignItems='center'
                                             justifyContent='center'
                                         >
                                             <Image
-                                                src={image}
-                                                alt={`${title ?? 'Image'} ${index + 1}`}
+                                                src={currentImage}
+                                                alt={`${title ?? 'Image'} ${currentIndex + 1}`}
                                                 w='full'
                                                 h='full'
                                                 objectFit='contain'
                                                 draggable={false}
-                                                loading={index === 0 ? 'eager' : 'lazy'}
+                                                loading='eager'
                                                 decoding='async'
                                             />
-                                        </Box>
-                                    ))}
-                                </MotionBox>
+                                        </MotionBox>
+                                    ) : (
+                                        <Text color='gray.300'>No images available</Text>
+                                    )}
+                                </AnimatePresence>
 
-                                <IconButton
-                                    position="absolute"
-                                    right={4}
-                                    top='50%'
-                                    transform='translateY(-50%)'
-                                    zIndex={10}
-                                    aria-label="Next image"
-                                    onClick={handleNext}
-                                    variant="ghost"
-                                    color="white"
-                                    bg="blackAlpha.500"
-                                    _hover={{ bg: 'blackAlpha.700' }}
-                                    borderRadius="full"
-                                    size="lg"
-                                >
-                                    <ChevronRight size={32} />
-                                </IconButton>
+                                {imageCount > 1 && (
+                                    <IconButton
+                                        position="absolute"
+                                        right={4}
+                                        top='50%'
+                                        transform='translateY(-50%)'
+                                        zIndex={10}
+                                        aria-label="Next image"
+                                        onClick={handleNext}
+                                        variant="ghost"
+                                        color="white"
+                                        bg="blackAlpha.500"
+                                        _hover={{ bg: 'blackAlpha.700' }}
+                                        borderRadius="full"
+                                        size="lg"
+                                    >
+                                        <ChevronRight size={32} />
+                                    </IconButton>
+                                )}
 
-                                <IconButton
-                                    position="absolute"
-                                    left={4}
-                                    top='50%'
-                                    transform='translateY(-50%)'
-                                    zIndex={10}
-                                    aria-label="Previous image"
-                                    onClick={handlePrev}
-                                    variant="ghost"
-                                    color="white"
-                                    bg="blackAlpha.500"
-                                    _hover={{ bg: 'blackAlpha.700' }}
-                                    borderRadius="full"
-                                    size="lg"
-                                >
-                                    <ChevronLeft size={32} />
-                                </IconButton>
+                                {imageCount > 1 && (
+                                    <IconButton
+                                        position="absolute"
+                                        left={4}
+                                        top='50%'
+                                        transform='translateY(-50%)'
+                                        zIndex={10}
+                                        aria-label="Previous image"
+                                        onClick={handlePrev}
+                                        variant="ghost"
+                                        color="white"
+                                        bg="blackAlpha.500"
+                                        _hover={{ bg: 'blackAlpha.700' }}
+                                        borderRadius="full"
+                                        size="lg"
+                                    >
+                                        <ChevronLeft size={32} />
+                                    </IconButton>
+                                )}
                             </Box>
 
                             {/* Carousel Thumbnails */}

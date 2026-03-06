@@ -1,19 +1,22 @@
+import { memo } from "react";
 import { Badge, Box, Card, HStack, Image } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
 interface IItemCard {
+    id: number;
     grade: string;
     scale: string;
     cover: string;
     title: string;
     releaseType: string;
     index?: number;
-    onClick?: () => void;
+    onClick?: (id: number) => void;
 }
 
 const MotionBox = motion(Box);
 
 const ItemCard: React.FC<IItemCard> = ({
+    id,
     grade,
     scale,
     cover,
@@ -37,7 +40,7 @@ const ItemCard: React.FC<IItemCard> = ({
                 overflow='hidden'
                 aspectRatio='3/4'
                 _hover={{ borderColor: 'gray.400', cursor: 'pointer' }}
-                onClick={onClick}
+                onClick={() => onClick?.(id)}
             >
                 <Box
                     position='relative'
@@ -88,4 +91,4 @@ const ItemCard: React.FC<IItemCard> = ({
     )
 }
 
-export default ItemCard
+export default memo(ItemCard)

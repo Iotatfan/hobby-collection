@@ -1,5 +1,6 @@
 import { ICollection } from "@/libs/collection/collection"
 import collectionServices from "@/services/content/collectionServices"
+import { delay } from "@/utils/delay"
 import { useState, useCallback } from "react"
 
 const useCollectionDetail = () => {
@@ -8,7 +9,11 @@ const useCollectionDetail = () => {
 
     const getCollectionDetail = useCallback(async (id: number) => {
         const response = await collectionServices.getCollection(id)
-        setCollection(response)
+        if (response.fromCache) {
+            return delay(500)
+        }
+
+        setCollection(response.data)
     }, [])
 
     return {

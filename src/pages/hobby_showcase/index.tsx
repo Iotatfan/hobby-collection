@@ -85,6 +85,7 @@ const CollectionList = () => {
                                 {collections?.map((collection, index) => (
                                     <Center key={collection.id}>
                                         <ItemCard
+                                            id={collection.id}
                                             index={index}
                                             title={collection.title}
                                             grade={collection.type.grade.short_name}
