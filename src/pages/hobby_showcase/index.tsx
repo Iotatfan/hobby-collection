@@ -1,7 +1,7 @@
 import { Box, Center, Flex, Grid, Spinner, Text } from "@chakra-ui/react"
 import useCollections from "@/hooks/collections/useCollections"
 import useCollectionDetail from "@/hooks/collections/useCollectionDetail"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import ItemCard from "./parts/ItemCard"
 import ImageModal from "./parts/ImageModal"
 import { AnimatePresence } from "framer-motion"
@@ -12,39 +12,44 @@ const CollectionList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLoadingCollections, setIsLoadingCollections] = useState(false)
     const [isLoadingCollectionDetail, setIsLoadingCollectionDetail] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-    const handleFetchCollections = async () => {
+    const handleFetchCollections = useCallback(async () => {
         setIsLoadingCollections(true)
-        await getCollections().then(() => {
+        try {
+            await getCollections()
+        } finally {
             setIsLoadingCollections(false)
-        })
-    }
+        }
+    }, [getCollections])
+
+    useEffect(() => {
+        void handleFetchCollections()
+    }, [handleFetchCollections])
 
     const handleCardClick = async (id: number) => {
         setIsLoadingCollectionDetail(true)
         setIsModalOpen(true)
-        await getCollectionDetail(id).
-            then(() => {
-                setIsLoadingCollectionDetail(false)
-            }).
-            catch(() => {
-                setIsModalOpen(false)
-            })
+        setErrorMessage(null)
+        try {
+            await getCollectionDetail(id)
+        } catch {
+            setIsModalOpen(false)
+            setErrorMessage("Failed to load collection detail.")
+        } finally {
+            setIsLoadingCollectionDetail(false)
+        }
     }
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
 
-    useEffect(() => {
-        handleFetchCollections()
-    }, [])
-
-
     return (
         <Flex w='full' mt='5' minH='90vh' alignItems='flex-start' gap='4' mx='auto' maxW='78rem' px='2'>
             <Box flexGrow='1' maxW='100%'>
                 <Text>Filter Section</Text>
+                {errorMessage && <Text mt={2} color="red.500">{errorMessage}</Text>}
                 {
                     isLoadingCollections ?
                         (

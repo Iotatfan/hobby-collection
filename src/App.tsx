@@ -1,19 +1,14 @@
 import { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { routes } from '@/router/index';
-import { Flex, ProgressCircle } from '@chakra-ui/react';
+import { Flex, Spinner } from '@chakra-ui/react';
 
 function App() {
     return (
         <Suspense
             fallback={
                 <Flex w='100%' h='100vh' bgColor='gray.400' opacity={0.6} justifyContent='center' alignItems='center'>
-                    <ProgressCircle.Root value={null} size="xl">
-                        <ProgressCircle.Circle>
-                            <ProgressCircle.Track />
-                            <ProgressCircle.Range />
-                        </ProgressCircle.Circle>
-                    </ProgressCircle.Root>
+                    <Spinner size='xl'></Spinner>
                 </Flex>
             }
         >

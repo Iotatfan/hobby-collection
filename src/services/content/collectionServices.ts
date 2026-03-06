@@ -1,23 +1,25 @@
-import axios from "axios"
-axios.defaults.baseURL = 'http://localhost:8080';
+import type { ICollection } from "@/libs/collection/collection";
+import http from "@/services/http"
 
 const getAllCollections = async () => {
     try {
-        const response = await axios.get('/collection', )
-        return response.data.data.collections
+        const response = await http.get('/collection',)
+        return response.data.data.collections as ICollection[]
     } catch (error) {
-        console.log("Error fetching collections:", error)
+        console.error("Error fetching collections:", error)
+        throw error
     }
 }
 
 const getCollection = async (id: number) => {
     try {
-        const response = await axios.get(`/collection/${id}`) 
-        return response.data.data
-            } catch (error) {
-        console.log("Error fetching collection detail:", error)
+        const response = await http.get(`/collection/${id}`)
+        return response.data.data as ICollection
+    } catch (error) {
+        console.error("Error fetching collection detail:", error)
+        throw error
     }
-}      
+}
 
 const collectionServices = {
     getAllCollections,
