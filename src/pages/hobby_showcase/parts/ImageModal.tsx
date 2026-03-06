@@ -142,6 +142,7 @@ const ImageModal: React.FC<IImageModal> = ({
                             display='flex'
                             bg='black'
                             paddingBottom={4}
+                            zIndex={1}
                         >
                             <AnimatePresence initial={false} custom={direction} mode="wait">
                                 <MotionImage
@@ -239,7 +240,9 @@ const ImageModal: React.FC<IImageModal> = ({
                             flexDirection="column"
                             justifyContent="center"
                             bg="gray.800"
-                            align='start' gap={6}>
+                            align='start' gap={6}
+                            zIndex={100}
+                            >
                             {/* Label */}
                             <Badge
                                 variant='solid'

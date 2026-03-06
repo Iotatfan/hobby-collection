@@ -2,7 +2,7 @@ import axios from "axios"
 import env from "../config/env"
 
 const http = axios.create({
-    baseURL: env.apiBaseUrl || 'http://localhost:8080',
+    baseURL: env.apiBaseUrl,
 })
 
 http.interceptors.request.use((config) => {
