@@ -81,13 +81,14 @@ const CollectionList = () => {
                                         'repeat(4, 1fr)',
                                         'repeat(5, 1fr)',
                                     ]
-                                } gap='4'>
+                                } gap='6px'>
                                 {collections?.map((collection, index) => (
                                     <Center key={collection.id}>
                                         <ItemCard
                                             index={index}
                                             title={collection.title}
-                                            grade={collection.type.grade.name}
+                                            grade={collection.type.grade.short_name}
+                                            scale={collection.type.scale}
                                             cover={collection.cover}
                                             releaseType={collection.release_type.name}
                                             onClick={() => handleCardClick(collection.id)}
@@ -105,6 +106,7 @@ const CollectionList = () => {
                     onClose={handleCloseModal}
                     isLoading={isLoadingCollectionDetail}
                     grade={collection?.type.grade.name}
+                    release={collection?.release_type.name}
                     title={collection?.title}
                     images={collection?.pictures}
                     description={collection?.description}

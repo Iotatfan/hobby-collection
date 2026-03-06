@@ -5,11 +5,11 @@ import { motion } from "framer-motion";
 
 
 const MotionBox = motion(Box);
-
 interface IImageModal {
     title?: string;
     images?: string[];
     grade?: string;
+    release?: string;
     description?: string;
     isOpen: boolean;
     isLoading?: boolean;
@@ -20,6 +20,7 @@ const ImageModal: React.FC<IImageModal> = ({
     title,
     images,
     grade,
+    release,
     description,
     isLoading,
     isOpen,
@@ -136,7 +137,7 @@ const ImageModal: React.FC<IImageModal> = ({
                                     h='full'
                                     display='flex'
                                     animate={{ x: `-${currentIndex * 100}%` }}
-                                    transition={{ type: 'spring', stiffness: 250, damping:40, mass: 1.9 }}
+                                    transition={{ type: 'spring', stiffness: 250, damping: 40, mass: 1.9 }}
                                 >
                                     {images?.map((image, index) => (
                                         <Box
@@ -151,10 +152,8 @@ const ImageModal: React.FC<IImageModal> = ({
                                             <Image
                                                 src={image}
                                                 alt={`${title ?? 'Image'} ${index + 1}`}
-                                                w='auto'
-                                                h='auto'
-                                                maxW='100%'
-                                                maxH='100%'
+                                                w='full'
+                                                h='full'
                                                 objectFit='contain'
                                                 draggable={false}
                                             />
@@ -242,19 +241,34 @@ const ImageModal: React.FC<IImageModal> = ({
                             bg="gray.800"
                             align='start' gap={6}
                             zIndex={100}
-                            >
+                        >
                             {/* Label */}
-                            <Badge
-                                variant='solid'
-                                colorPalette={grade === 'High Grade' ? 'red' : 'yellow'}
-                                bottom={2} left={2}
-                                fontSize='sm'
-                                fontWeight='bold'
-                                px={1.5}
-                                py={1}
-                            >
-                                {grade}
-                            </Badge>
+                            <HStack>
+                                <Badge
+                                    variant='solid'
+                                    colorPalette='cyan'
+                                    bottom={2} left={2}
+                                    fontSize='sm'
+                                    fontWeight='bold'
+                                    px={1.5}
+                                    py={1}
+                                >
+                                    {grade}
+                                </Badge>
+
+                                <Badge
+                                    variant='solid'
+                                    bg={release === "P-Bandai" ? "badge.gold.bg" : "badge.regular.bg"}
+                                    color={release === "P-Bandai" ? "badge.gold.fg" : "badge.regular.fg"}
+                                    bottom={2} left={2}
+                                    fontSize='sm'
+                                    fontWeight='bold'
+                                    px={1.5}
+                                    py={1}
+                                >
+                                    {release}
+                                </Badge>
+                            </HStack>
 
                             {/* Title */}
                             <Text
@@ -265,6 +279,15 @@ const ImageModal: React.FC<IImageModal> = ({
                             >
                                 {title}
                             </Text>
+
+                            {/* <Text
+                                fontSize={{ base: 'md', lg: 'lg' }}
+                                fontWeight="bold"
+                                color="white"
+                                lineHeight="relaxed"
+                            >
+                                {title}
+                            </Text> */}
 
                             {/* Description */}
                             <Text
@@ -278,7 +301,7 @@ const ImageModal: React.FC<IImageModal> = ({
 
                         {/* Close Button */}
                         <IconButton
-                            position={{ base:'fixed', lg:'absolute'}}
+                            position={{ base: 'fixed', lg: 'absolute' }}
                             right={{ base: 0, lg: 0 }}
                             top={{ base: 0, lg: 0 }}
                             zIndex={101}

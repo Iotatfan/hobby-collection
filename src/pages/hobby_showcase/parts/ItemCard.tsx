@@ -1,8 +1,9 @@
-import { Badge, Box, Card, Image, Text } from "@chakra-ui/react";
+import { Badge, Box, Card, HStack, Image } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
 interface IItemCard {
     grade: string;
+    scale: string;
     cover: string;
     title: string;
     releaseType: string;
@@ -14,6 +15,7 @@ const MotionBox = motion(Box);
 
 const ItemCard: React.FC<IItemCard> = ({
     grade,
+    scale,
     cover,
     title,
     releaseType,
@@ -24,7 +26,7 @@ const ItemCard: React.FC<IItemCard> = ({
         <MotionBox
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: (index || 0) * 0.2 , duration: 0.5 }}
+            transition={{ delay: (index || 0) * 0.2, duration: 0.5 }}
         >
             <Card.Root
                 w='full'
@@ -51,20 +53,35 @@ const ItemCard: React.FC<IItemCard> = ({
                         }}
                         src={cover}
                     />
-                    <Badge
-                        variant='solid'
-                        colorPalette={grade === 'High Grade' ? 'red' : 'yellow'}
+                    <HStack
                         position='absolute'
-                        bottom={2} left={2}
-                        fontSize='xs'
-                        fontWeight='medium'>
-                        {grade}
-                    </Badge>
+                        bottom='10px' left='10px'
+                    >
+                        <Badge
+                            variant='solid'
+                            colorPalette='cyan'
+                            fontSize='xs'
+                            fontWeight='medium'
+                        >
+                            {grade + ' ' + scale}
+                        </Badge>
+
+                    </HStack>
                 </Box>
 
                 <Card.Body p={2} gap={1}>
-                    <Card.Title truncate lineClamp={2} fontSize={'md'} fontWeight='bold' >{title}</Card.Title>
-                    <Text truncate fontSize={'xs'} color='gray.500' fontWeight='medium'>{releaseType}</Text>
+                    <Card.Title truncate lineClamp={2} fontSize={'md'} fontWeight='bold'>{title}</Card.Title>
+                    <Box>
+                        <Badge
+                            variant='solid'
+                            bg={releaseType === "P-Bandai" ? "badge.gold.bg" : "badge.regular.bg"}
+                            color={releaseType === "P-Bandai" ? "badge.gold.fg" : "badge.regular.fg"}
+                            fontSize='xs'
+                            fontWeight='medium'>
+                            {releaseType}
+                        </Badge>
+                    </Box>
+                    {/* <Text truncate fontSize={'xs'} color='gray.500' fontWeight='medium'>{releaseType}</Text> */}
                 </Card.Body>
             </Card.Root>
         </MotionBox>
