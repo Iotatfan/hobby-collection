@@ -1,10 +1,9 @@
 import { Box, IconButton, Image, VStack, Text, HStack, Badge, Spinner } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 
-const MotionImage = motion(Image);
 const MotionBox = motion(Box);
 
 interface IImageModal {
@@ -27,7 +26,6 @@ const ImageModal: React.FC<IImageModal> = ({
     onClose
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0)
-    const [direction, setDirection] = useState(0)
 
     useEffect(() => {
         if (!isOpen) return
@@ -59,33 +57,12 @@ const ImageModal: React.FC<IImageModal> = ({
     }, [isOpen])
 
     const handlePrev = useCallback(() => {
-        setDirection(-1)
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? (images?.length ?? 1) - 1 : prevIndex - 1))
     }, [images])
 
     const handleNext = useCallback(() => {
-        setDirection(1)
         setCurrentIndex((nextIndex) => (nextIndex === (images?.length ?? 1) - 1 ? 0 : nextIndex + 1))
     }, [images])
-
-    const slideVariants = {
-        enter: (direction: number) => ({
-            x: direction > 0 ? 100 : -100,
-            opacity: 0,
-            zIndex: 0,
-        }),
-        center: {
-            x: 0,
-            opacity: 1,
-            zIndex: 10,
-        },
-        exit: (direction: number) => ({
-            x: direction < 0 ? 100 : -100,
-            opacity: 0,
-            zIndex: 0,
-        }),
-    }
-
     return (
         <MotionBox
             initial={{ opacity: 0 }}
@@ -154,26 +131,36 @@ const ImageModal: React.FC<IImageModal> = ({
                                 justifyContent='center'
                                 overflow='hidden'
                             >
-                                <AnimatePresence initial={false} custom={direction} mode="wait">
-                                    <MotionImage
-                                        key={currentIndex}
-                                        src={images && images.length > 0 ? images[currentIndex] : ''}
-                                        custom={direction}
-                                        variants={slideVariants}
-                                        initial='enter'
-                                        animate='center'
-                                        exit='exit'
-                                        transition={{
-                                            x: { type: 'spring', stiffness: 300, damping: 30 },
-                                            opacity: { duration: 0.2 },
-                                        }}
-                                        w='auto'
-                                        h='auto'
-                                        maxW='100%'
-                                        maxH='100%'
-                                        objectFit='contain'
-                                    />
-                                </AnimatePresence>
+                                <MotionBox
+                                    w={`${(images?.length ?? 1) * 100}%`}
+                                    h='full'
+                                    display='flex'
+                                    animate={{ x: `-${currentIndex * 100}%` }}
+                                    transition={{ type: 'spring', stiffness: 250, damping:40, mass: 1.9 }}
+                                >
+                                    {images?.map((image, index) => (
+                                        <Box
+                                            key={`${image}-${index}`}
+                                            w='100%'
+                                            h='full'
+                                            flex='0 0 100%'
+                                            display='flex'
+                                            alignItems='center'
+                                            justifyContent='center'
+                                        >
+                                            <Image
+                                                src={image}
+                                                alt={`${title ?? 'Image'} ${index + 1}`}
+                                                w='auto'
+                                                h='auto'
+                                                maxW='100%'
+                                                maxH='100%'
+                                                objectFit='contain'
+                                                draggable={false}
+                                            />
+                                        </Box>
+                                    ))}
+                                </MotionBox>
 
                                 <IconButton
                                     position="absolute"
@@ -220,7 +207,6 @@ const ImageModal: React.FC<IImageModal> = ({
                                         as="button"
                                         onClick={() => {
                                             handleCarouselClick(index);
-                                            setDirection(index > currentIndex ? 1 : -1);
                                         }}
                                         w={12}
                                         h={12}
