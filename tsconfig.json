@@ -25,6 +25,7 @@
             "@/layouts/*": ["./layouts/*"],
             "@/services/*": ["./services/*"],
             "@/libs/*": ["./libs/*"],
+            "@/utils/*": ["./utils/*"],
         }
     },
     "include": ["src"],
