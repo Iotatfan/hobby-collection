@@ -1,6 +1,6 @@
 # Hobby Collection
 
-A full-stack web application for managing and organizing personal hobby collections. The project consists of a React frontend, Go backend, and a dedicated Playwright automation suite.
+A full-stack web application for cataloging and managing personal collections of **Gunpla, figures, and other model kits**. The project consists of a React frontend, Go backend, and a dedicated Playwright automation suite.
 
 > **Current Status:** The application is under active development. Access is currently protected using a dedicated application password with JWT-based authorization. Public user registration is not currently supported.
 
